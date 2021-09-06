@@ -1,4 +1,7 @@
-import React, { Fragment } from 'react'
+import React, { Fragment, useEffect } from 'react'
+import axios from "axios";
+
+
 
 import "./styles.scss";
 
@@ -22,16 +25,18 @@ export default function Appointment(props) {
   );
 
   //Pass to form component to save info entered into form
-  function save(name, interviewer) {
+  async function save(name, interviewer) {
     //New interview object created when save is clicked
     const interview = {
       student: name,
       interviewer
     };
 
-    props.bookInterview(props.id, interview);
-
-    transition(SHOW);
+    let response = await props.bookInterview(props.id, interview)
+    
+    if (response) {
+      transition(SHOW)
+    };
   }
 
   return (

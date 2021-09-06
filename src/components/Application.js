@@ -146,7 +146,7 @@ export default function Application(props) {
 
 
   //Pass to each appointment component
-  function bookInterview(id, interview) {
+  async function bookInterview(id, interview) {
 
     //Create new appointment object
     const appointment = {
@@ -160,9 +160,14 @@ export default function Application(props) {
       [id]: appointment
     };
 
-    console.log("BOOKINTERVIEW:", id, interview);
-
-    setState({...state, appointments});
+    // setState({...state, appointments});
+    
+    const queryURL = `http://localhost:8001/api/appointments/${id}`;
+    let response = await axios.put(queryURL, {interview})
+      .then(() => { setState({...state, appointments} ); return true; })
+    if (response) {
+      return true
+    }
   }
 
 
