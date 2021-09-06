@@ -163,8 +163,10 @@ export default function Application(props) {
     const queryURL = `http://localhost:8001/api/appointments/${id}`;
     let bookReturn = axios.put(queryURL, {interview})
 
+    //Set state to include new appointments
     bookReturn.then(() => { setState({...state, appointments} )})
- 
+    
+    //return promise to be used in other file
     return bookReturn;
   
     
@@ -179,7 +181,14 @@ export default function Application(props) {
 
   function cancelInterview(id) {
 
-    const queryURL = `http://localhost:8001/api/appointments/${id}`;
+    const interview = null;
+
+
+
+    console.log("cancelInterviewInApp", interview);
+    
+    // const queryURL = `http://localhost:8001/api/appointments/${id}`;
+
     
 
   }
@@ -200,6 +209,7 @@ export default function Application(props) {
       interview={interview} 
       interviewers={dailyInterviewers}
       bookInterview={bookInterview}
+      cancelInterview={cancelInterview}
 
       //DEPRECATED AS NEED TO UPDATE interview WITH INFO FROM getInterview function
       //option 2: or we can use the spread operator which does the same as above

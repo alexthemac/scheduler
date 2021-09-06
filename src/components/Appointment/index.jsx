@@ -44,7 +44,7 @@ export default function Appointment(props) {
 
 
 
-    
+
     
     ///ALTERNATIVE WAY TO PROMISE FOR save: ADD async in front of function bookInterview. (also in front of function save)
     // //Wait on server response for updating the interivew object in the db
@@ -54,6 +54,17 @@ export default function Appointment(props) {
     // if (response) {
     //   transition(SHOW)
     // };
+  }
+
+  function deleteInterview() {
+
+    console.log("DELETE ITERVIEW!!!", props.id);
+
+
+    props.cancelInterview();
+
+
+
   }
 
   return (
@@ -67,6 +78,7 @@ export default function Appointment(props) {
         <Show
           student={props.interview.student}
           interviewer={props.interview.interviewer}
+          onDelete={deleteInterview}
         />
       )}
       {/* {mode === CREATE && <Form interviewers={[]} /> } */}
