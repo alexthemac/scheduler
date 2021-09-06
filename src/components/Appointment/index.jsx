@@ -10,6 +10,7 @@ import Show from "components/Appointment/Show";
 import Empty from "components/Appointment/Empty";
 import Form from "components/Appointment/Form"
 import useVisualMode from 'hooks/useVisualMode';
+import Status from 'components/Appointment/Status';
 
 
 export default function Appointment(props) {
@@ -19,24 +20,40 @@ export default function Appointment(props) {
   const EMPTY = "EMPTY";
   const SHOW = "SHOW";
   const CREATE = "CREATE";
+  const SAVING = "SAVING";
 
   const { mode, transition, back } = useVisualMode(
     props.interview ? SHOW : EMPTY
   );
 
   //Pass to form component to save info entered into form
-  async function save(name, interviewer) {
+  function save(name, interviewer) {
     //New interview object created when save is clicked
     const interview = {
       student: name,
       interviewer
     };
 
-    let response = await props.bookInterview(props.id, interview)
+    //Switch to saving icon while we await server response
+    transition(SAVING);
+
+
+    //Wait on server response for updating the interivew object in the db
+    props.bookInterview(props.id, interview)
+    .then(() => transition(SHOW));
+
+
+
     
-    if (response) {
-      transition(SHOW)
-    };
+    
+    ///ALTERNATIVE WAY TO PROMISE FOR save: ADD async in front of function bookInterview. (also in front of function save)
+    // //Wait on server response for updating the interivew object in the db
+    // let response = await props.bookInterview(props.id, interview)
+    
+    // //Once we recieve response, transition to show the new appointment
+    // if (response) {
+    //   transition(SHOW)
+    // };
   }
 
   return (
@@ -45,15 +62,16 @@ export default function Appointment(props) {
       <Header time={props.time} />
       {/* DEPRECATED, SEE BELOW FOR REPLACEMENT */}
       {/* {props.interview ? <Show student={props.interview.student} interviewer={props.interview.interviewer} /> : <Empty />} */}
-      {mode === EMPTY && <Empty onAdd={() => transition(CREATE)} />}
-      {mode === SHOW && (
+      { mode === EMPTY && <Empty onAdd={() => transition(CREATE)} />}
+      { mode === SHOW && (
         <Show
           student={props.interview.student}
           interviewer={props.interview.interviewer}
         />
       )}
       {/* {mode === CREATE && <Form interviewers={[]} /> } */}
-      {mode === CREATE && <Form interviewers={props.interviewers} onCancel={() => back()} onSave={save}  /> }
+      { mode === CREATE && <Form interviewers={props.interviewers} onCancel={() => back()} onSave={save}  /> }
+      { mode === SAVING && <Status /> }
 
     </article>
   );

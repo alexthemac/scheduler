@@ -145,8 +145,8 @@ export default function Application(props) {
   const dailyInterviewers = getInterviewersForDay(state, state.day);
 
 
-  //Pass to each appointment component
-  async function bookInterview(id, interview) {
+  //Pass to each appointment component (needs to be async funtion for query to work)
+  function bookInterview(id, interview) {
 
     //Create new appointment object
     const appointment = {
@@ -160,16 +160,29 @@ export default function Application(props) {
       [id]: appointment
     };
 
-    // setState({...state, appointments});
-    
     const queryURL = `http://localhost:8001/api/appointments/${id}`;
-    let response = await axios.put(queryURL, {interview})
-      .then(() => { setState({...state, appointments} ); return true; })
-    if (response) {
-      return true
-    }
+    let bookReturn = axios.put(queryURL, {interview})
+
+    bookReturn.then(() => { setState({...state, appointments} )})
+ 
+    return bookReturn;
+  
+    
+    ///ALTERNATIVE WAY TO PROMISE FOR bookReturn ADD async in front of function bookInterview. (also in front of function save)
+    // const queryURL = `http://localhost:8001/api/appointments/${id}`;
+    // let response = await axios.put(queryURL, {interview})
+    //   .then(() => { setState({...state, appointments} ); return true; })
+    // if (response) {
+    //   return true
+    // }
   }
 
+  function cancelInterview(id) {
+
+    const queryURL = `http://localhost:8001/api/appointments/${id}`;
+    
+
+  }
 
   //Create new array containing an <Appointment /> component for each item in the array
   const appointmentItem = dailyAppointments.map( (appointment) => {
