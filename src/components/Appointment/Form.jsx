@@ -7,14 +7,18 @@ import InterviewerList from "components/InterviewerList";
 
 export default function Form (props) {
 
+  //If there is a student name, set initial state to student name (edit appointment), if not leave blank (create new appointment)
   const [name, setName] = useState(props.name || "");
+  //If there is an interviewer, set initial state to interviewer (edit appointment), if not leave blank (create new appointment)
   const [interviewer, setInterviewer] = useState(props.interviewer || null);
 
+  //Reset form inputs to blank for name and non selected for interviewer
   const reset = function() {
     setName('');
     setInterviewer(null)
   };
 
+  //When cancel button pressed, go back to previous visual state and clear student name field and selected interviewer
   const cancel = function() {
     props.onCancel();
     reset();
