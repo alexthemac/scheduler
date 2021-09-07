@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from "axios";
+import { getAppointmentsForDay } from "helpers/selectors";
+
 
 //Function (custom hook) that exports an array of states and functions required in Application.js (cleans up Application.js)
 export default function useApplicationData () {
@@ -62,6 +64,9 @@ export default function useApplicationData () {
     interviewers: {}
   });
 
+
+  console.log("DAYYSSSSSS", state.days);
+
   const setDay = day => setState({ ...state, day });
 
   //Pass to each appointment component (needs to be async funtion for query to work)
@@ -111,11 +116,79 @@ export default function useApplicationData () {
       ...state.appointments,
       [id]: appointment
     };
-        
+
+
+    console.log("apptment id", id);
+
+    console.log("appoitnment for Monday", getAppointmentsForDay(state, "Monday"));
+
+    console.log("state.day", state.day);
+
+    //Need to update spots
+    //Need to create new array of days with new spots
+    //In new array, we need to set the spots to the remaining spots for that day (interview =null)
+    //if interview is null update spots. 
+
+
+    // let daysNew = Array.from([...state.days]);
+    
+    // let daysNew = state.days.slice();
+
+    //create new days array
+    // let daysNew = [
+    //   ...state.days
+    // ];
+
+    //Check for remaining spots
+    const remainingSpots = function (day, appointments) {
+
+      let spots = 0;
+
+      //Check inside each appointment (using app, appointment id) to see if the interview is null oro not
+      for (const app of day.appointments) {
+        //If null, increment the spots
+        if (appointments[app].interview === null) {
+          spots++;
+        }
+      }
+      return spots;
+    }
+
+    //create new days array with updated spots
+    let daysNew = state.days.map(day => { 
+      return {...day, spots: remainingSpots(day, appointments)  }
+    });
+
+
+    console.log("DAYSNEW!!!!!!!!", daysNew);
+
+    // //Find index of day where appointment is deleted
+    // const dayIndex = daysNew.findIndex((day) => state.day === day.name )
+
+    // console.log('daysNewPreUpdate', daysNew);
+
+    // daysNew[dayIndex].spots = 100;
+  
+
+
+    // console.log('daysNewPostUpdate', daysNew);
+
+    // days[0].spots = 100;
+
+    // console.log("day0", days[0]);
+
+    // const days = {
+
+    // }
+  
     const queryURL = `http://localhost:8001/api/appointments/${id}`;
     let cancelReturn = axios.delete(queryURL)
 
-    cancelReturn.then(() => { setState({...state, appointments})})
+    cancelReturn.then(() => { setState((prev) => ({...prev, appointments, days: daysNew}))})
+    // cancelReturn.then(() => { setState({...state, appointments})})
+
+
+    // .then(() => { setState({...state, days})})
   
     return cancelReturn;
   }
@@ -140,6 +213,8 @@ export default function useApplicationData () {
    
     });
   }, [])
+
+  // useEffect(() => console.log (`${JSON.stringify(state.days.spots)} spot has changed!`), [state.appointments])
 
   const returnObj = {
     state,
