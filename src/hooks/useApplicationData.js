@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from "axios";
 
-
-//Function that exports an array of states and functions required in Application.js (cleans up Application.js)
+//Function (custom hook) that exports an array of states and functions required in Application.js (cleans up Application.js)
 export default function useApplicationData () {
 
   //REPLACED BY SINGLE STATE OBJECT BELOW

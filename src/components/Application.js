@@ -6,7 +6,8 @@ import { getAppointmentsForDay, getInterview, getInterviewersForDay } from "help
 import useApplicationData from "hooks/useApplicationData";
 
 export default function Application(props) {
-
+  
+  //Import state data and functions that modify state from useApplicationData
   const {
     state,
     setDay,
@@ -18,10 +19,10 @@ export default function Application(props) {
   const dailyAppointments = getAppointmentsForDay(state, state.day);
 
   //Create an array of interviewers for the selected day array
-  const dailyInterviewers = getInterviewersForDay(state, state.day);
+  const interviewers = getInterviewersForDay(state, state.day);
 
   //Create new array containing an <Appointment /> component for each item in the array
-  const appointmentItem = dailyAppointments.map( (appointment) => {
+  const appointments = dailyAppointments.map( (appointment) => {
 
     const interview = getInterview(state, appointment.interview);
     
@@ -34,7 +35,7 @@ export default function Application(props) {
       id={appointment.id}
       time={appointment.time}
       interview={interview} 
-      interviewers={dailyInterviewers}
+      interviewers={interviewers}
       bookInterview={bookInterview}
       cancelInterview={cancelInterview}
 
@@ -68,7 +69,7 @@ export default function Application(props) {
         />
       </section>
       <section className="schedule">
-        {appointmentItem}
+        {appointments}
         {/* due to the way the CSS is setup, need to add one extra appointment at end to view all */}
         <Appointment key="last" time="5pm" /> 
       </section>
