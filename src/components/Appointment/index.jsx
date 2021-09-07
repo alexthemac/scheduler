@@ -44,7 +44,9 @@ export default function Appointment(props) {
     //Wait on server response for updating the interview object in the db
     props.bookInterview(props.id, interview)
     //Once updated, display newly created appointment
-    .then(() => transition(SHOW));
+    .then(() => transition(SHOW))
+    //if error, display error save message
+    .catch(() => transition(ERROR_SAVE, true));
     
     ///ALTERNATIVE WAY TO PROMISE FOR save: ADD async in front of function bookInterview. (also in front of function save)
     // //Wait on server response for updating the interivew object in the db
@@ -66,12 +68,14 @@ export default function Appointment(props) {
   function deleteInterviewConfirm() {
 
     //Show deleteing icon while we wait for server response
-    transition(DELETING);
+    transition(DELETING, true);
 
     //Wait on server response for deleting the interview object in the db
     props.cancelInterview(props.id)
     //Once updated, display empty for that timeslot
-    .then(() => transition(EMPTY));
+    .then(() => transition(EMPTY))
+    //if error, display error delete message
+    .catch(() => transition(ERROR_DELETE, true));
   }
   
   return (
@@ -101,8 +105,8 @@ export default function Appointment(props) {
                           interviewer={props.interview.interviewer.id}
                         />
                       }
-      { mode === ERROR_SAVE && <Error message= "Could not save appointment" /> } 
-      { mode === ERROR_DELETE && <Error message= "Could not delete appointment" /> }
+      { mode === ERROR_SAVE && <Error message= "Could not save appointment" onClose={() => back()} /> } 
+      { mode === ERROR_DELETE && <Error message= "Could not delete appointment" onClose={() => back()} /> }
 
     </article>
   );

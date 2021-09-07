@@ -6,6 +6,8 @@ export default function useVisualMode(initial) {
   //Create array to keep track of states. Allows us to go back to previous state
   const [history, setHistory] = useState([initial]);
 
+  // console.log(history);
+
   //Moves mode forward (set default replace to false if no value)
   const transition = (newMode, replace = false) => {
 
