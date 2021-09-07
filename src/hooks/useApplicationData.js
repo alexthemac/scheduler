@@ -84,12 +84,37 @@ export default function useApplicationData () {
       [id]: appointment
     };
 
+
+
+    //Check for remaining spots
+    const remainingSpots = function (day, appointments) {
+
+      let spots = 0;
+
+      //Check inside each appointment (using app, appointment id) to see if the interview is null or not
+      for (const app of day.appointments) {
+        //If current interview is null, increment the spots
+        if (appointments[app].interview === null) {
+          spots++;
+        }
+      }
+      return spots;
+    }
+
+    //create new days array with updated spots
+    let daysNew = state.days.map(day => { 
+      return {...day, spots: remainingSpots(day, appointments)  }
+    });
+
     //Query server to add newly created interview object to appointments
     const queryURL = `http://localhost:8001/api/appointments/${id}`;
     let bookReturn = axios.put(queryURL, {interview})
 
-    //Set state to include new appointments
-    bookReturn.then(() => { setState({...state, appointments} )})
+    //Set state to include new appointments and daysNew
+    bookReturn.then(() => { setState((prev) => ({...prev, appointments, days: daysNew})) })
+    // bookReturn.then(() => { setState({...state, appointments} )})
+    // cancelReturn.then(() => { setState((prev) => ({...prev, appointments, days: daysNew}))})
+
     
     //return query promise to be used in other file
     return bookReturn;
@@ -117,19 +142,7 @@ export default function useApplicationData () {
       [id]: appointment
     };
 
-
-    console.log("apptment id", id);
-
-    console.log("appoitnment for Monday", getAppointmentsForDay(state, "Monday"));
-
-    console.log("state.day", state.day);
-
-    //Need to update spots
-    //Need to create new array of days with new spots
-    //In new array, we need to set the spots to the remaining spots for that day (interview =null)
-    //if interview is null update spots. 
-
-
+    //FOLLOWING DID NOT WORK FOR CREATIG NEW ARRAY-----------------------
     // let daysNew = Array.from([...state.days]);
     
     // let daysNew = state.days.slice();
@@ -139,6 +152,19 @@ export default function useApplicationData () {
     //   ...state.days
     // ];
 
+    //THIS ALWAYS MODIFIES state.days for some reason
+    // daysNew[dayIndex].spots = 100;
+
+
+    // days[0].spots = 100;
+
+
+    // //Find index of day where appointment is deleted
+    // const dayIndex = daysNew.findIndex((day) => state.day === day.name )
+
+    //-------------------------------------
+
+
     //Check for remaining spots
     const remainingSpots = function (day, appointments) {
 
@@ -146,7 +172,7 @@ export default function useApplicationData () {
 
       //Check inside each appointment (using app, appointment id) to see if the interview is null oro not
       for (const app of day.appointments) {
-        //If null, increment the spots
+        //If current interview is null, increment the spots
         if (appointments[app].interview === null) {
           spots++;
         }
@@ -160,27 +186,6 @@ export default function useApplicationData () {
     });
 
 
-    console.log("DAYSNEW!!!!!!!!", daysNew);
-
-    // //Find index of day where appointment is deleted
-    // const dayIndex = daysNew.findIndex((day) => state.day === day.name )
-
-    // console.log('daysNewPreUpdate', daysNew);
-
-    // daysNew[dayIndex].spots = 100;
-  
-
-
-    // console.log('daysNewPostUpdate', daysNew);
-
-    // days[0].spots = 100;
-
-    // console.log("day0", days[0]);
-
-    // const days = {
-
-    // }
-  
     const queryURL = `http://localhost:8001/api/appointments/${id}`;
     let cancelReturn = axios.delete(queryURL)
 
