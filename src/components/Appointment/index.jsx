@@ -11,6 +11,7 @@ import Empty from "components/Appointment/Empty";
 import Form from "components/Appointment/Form"
 import useVisualMode from 'hooks/useVisualMode';
 import Status from 'components/Appointment/Status';
+import Confirm from 'components/Appointment/Confirm';
 
 
 export default function Appointment(props) {
@@ -22,6 +23,7 @@ export default function Appointment(props) {
   const CREATE = "CREATE";
   const SAVING = "SAVING";
   const DELETING = "DELETING";
+  const CONFIRM = "CONFIRM";
 
   const { mode, transition, back } = useVisualMode(
     props.interview ? SHOW : EMPTY
@@ -42,10 +44,6 @@ export default function Appointment(props) {
     //Wait on server response for updating the interivew object in the db
     props.bookInterview(props.id, interview)
     .then(() => transition(SHOW));
-
-
-
-
     
     ///ALTERNATIVE WAY TO PROMISE FOR save: ADD async in front of function bookInterview. (also in front of function save)
     // //Wait on server response for updating the interivew object in the db
@@ -57,19 +55,20 @@ export default function Appointment(props) {
     // };
   }
 
-  function deleteInterview() {
+  //When button clicked to delete appointment, prompt user to confirm delete
+  function deleteInterviewPrompt() {
 
-    // console.log("DELETE ITERVIEW!!!", props.id);
+    transition(CONFIRM);
+  }
 
+  //If the user presses confirm, actually do delete
+  function deleteInterviewConfirm() {
 
-  
     transition(DELETING);
 
     props.cancelInterview(props.id)
     .then(() => transition(EMPTY));
-
-
-
+    
   }
 
   return (
@@ -83,13 +82,14 @@ export default function Appointment(props) {
         <Show
           student={props.interview.student}
           interviewer={props.interview.interviewer}
-          onDelete={deleteInterview}
+          onDelete={deleteInterviewPrompt}
         />
       )}
       {/* {mode === CREATE && <Form interviewers={[]} /> } */}
       { mode === CREATE && <Form interviewers={props.interviewers} onCancel={() => back()} onSave={save}  /> }
       { mode === SAVING && <Status /> }
       { mode === DELETING && <Status /> }
+      { mode === CONFIRM && <Confirm message="Are you sure you want to delete?" onCancel={() => back()} onConfirm={deleteInterviewConfirm} />}
 
     </article>
   );
