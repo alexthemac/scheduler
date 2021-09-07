@@ -160,20 +160,15 @@ export default function Application(props) {
       [id]: appointment
     };
 
-    // console.log("interviewBookInterview", {interview});
-    // console.log("without brackets", interview)
-
-    // console.log({interview: null});
-
+    //Query server to add newly created interview object to appointments
     const queryURL = `http://localhost:8001/api/appointments/${id}`;
     let bookReturn = axios.put(queryURL, {interview})
 
     //Set state to include new appointments
     bookReturn.then(() => { setState({...state, appointments} )})
     
-    //return promise to be used in other file
+    //return query promise to be used in other file
     return bookReturn;
-  
     
     ///ALTERNATIVE WAY TO PROMISE FOR bookReturn ADD async in front of function bookInterview. (also in front of function save)
     // const queryURL = `http://localhost:8001/api/appointments/${id}`;
@@ -192,32 +187,18 @@ export default function Application(props) {
       interview: null
     };
 
-    // console.log("apptment:",appointment);
-
     //Create new appointments object (to include newly created appointment from above)
     const appointments = {
       ...state.appointments,
       [id]: appointment
     };
-
-
-    // console.log("APPTMENTS:", appointments);
-    
-    
+        
     const queryURL = `http://localhost:8001/api/appointments/${id}`;
     let cancelReturn = axios.delete(queryURL)
 
-    // console.log("CR1", cancelReturn);
-    // console.log(state);
     cancelReturn.then(() => { setState({...state, appointments})})
-    // console.log("CR2", cancelReturn);
-    // console.log(state);
+  
     return cancelReturn;
-
-
-
-    
-
   }
 
   //Create new array containing an <Appointment /> component for each item in the array
