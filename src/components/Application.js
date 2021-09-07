@@ -148,17 +148,22 @@ export default function Application(props) {
   //Pass to each appointment component (needs to be async funtion for query to work)
   function bookInterview(id, interview) {
 
-    //Create new appointment object
+    //Create new appointment object from data in form (to be inserted)
     const appointment = {
       ...state.appointments[id],
       interview: { ...interview }
     };
 
-    //Create new appointments object
+    //Create new appointments object (to include newly created appointment from above)
     const appointments = {
       ...state.appointments,
       [id]: appointment
     };
+
+    // console.log("interviewBookInterview", {interview});
+    // console.log("without brackets", interview)
+
+    // console.log({interview: null});
 
     const queryURL = `http://localhost:8001/api/appointments/${id}`;
     let bookReturn = axios.put(queryURL, {interview})
@@ -181,13 +186,35 @@ export default function Application(props) {
 
   function cancelInterview(id) {
 
-    const interview = null;
+    //Create new appointment object with null interview data (to be inserted)
+    const appointment = {
+      ...state.appointments[id],
+      interview: null
+    };
+
+    // console.log("apptment:",appointment);
+
+    //Create new appointments object (to include newly created appointment from above)
+    const appointments = {
+      ...state.appointments,
+      [id]: appointment
+    };
 
 
-
-    console.log("cancelInterviewInApp", interview);
+    // console.log("APPTMENTS:", appointments);
     
-    // const queryURL = `http://localhost:8001/api/appointments/${id}`;
+    
+    const queryURL = `http://localhost:8001/api/appointments/${id}`;
+    let cancelReturn = axios.delete(queryURL)
+
+    // console.log("CR1", cancelReturn);
+    // console.log(state);
+    cancelReturn.then(() => { setState({...state, appointments})})
+    // console.log("CR2", cancelReturn);
+    // console.log(state);
+    return cancelReturn;
+
+
 
     
 
