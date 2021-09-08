@@ -11,6 +11,8 @@ export default function Form (props) {
   const [name, setName] = useState(props.name || "");
   //If there is an interviewer, set initial state to interviewer (edit appointment), if not leave blank (create new appointment)
   const [interviewer, setInterviewer] = useState(props.interviewer || null);
+  //Error state
+  const [error, setError] = useState("");
 
   //Reset form inputs to blank for name and non selected for interviewer
   const reset = function() {
@@ -24,16 +26,17 @@ export default function Form (props) {
     reset();
   };
 
-  //Error state
-  const [error, setError] = useState("");
-
   //Validates whether name is blank WHEN confirm button is clicked. If blank, setsError. If not blank, call onSave function.
   function validate() {
     if (name === "") {
       setError("Student name cannot be blank");
       return;
     }
-    
+
+    //Set error to "" if a name is entered
+    setError("");
+
+    //If name is not blank, save via onsave function
     props.onSave(name, interviewer);
   }
 
