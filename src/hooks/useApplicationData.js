@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import axios from "axios";
-import { getAppointmentsForDay } from "helpers/selectors";
 
 
 //Function (custom hook) that exports an array of states and functions required in Application.js (cleans up Application.js)
@@ -63,9 +62,6 @@ export default function useApplicationData () {
     },
     interviewers: {}
   });
-
-
-  console.log("DAYYSSSSSS", state.days);
 
   const setDay = day => setState({ ...state, day });
 
