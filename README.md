@@ -1,8 +1,12 @@
 # Interview Scheduler
 
-Interview schedule is a simple react application. 
+* Interview scheduler (`scheduler`) is a single page application (SPA) built using React.
 
-HTML, CSS, JS, PostgreSQL, Axios, Webpack, Babel
+* Data is persisted by the API server using a PostgreSQL database.
+
+* The client application communicates with an API server over HTTP, using the JSON format.
+
+* HTML, CSS, JS, PostgreSQL, Axios, Webpack, Babel
 
 Testing done with:
 
@@ -17,7 +21,7 @@ Testing done with:
 
 ## Setup
 
-`scheduler` must be used with `scheduler-api` to function properly.
+`scheduler` must be used with `scheduler-api`. See `scheduler-api` repository. 
 
 Install dependencies with `npm install`.
 
