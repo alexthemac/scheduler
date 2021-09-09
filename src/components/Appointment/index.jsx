@@ -11,6 +11,7 @@ import Status from 'components/Appointment/Status';
 import Confirm from 'components/Appointment/Confirm';
 import Error from 'components/Appointment/Error';
 
+//Component determines which appointment version is rendered
 export default function Appointment(props) {
 
   const EMPTY = "EMPTY";
@@ -23,12 +24,14 @@ export default function Appointment(props) {
   const ERROR_SAVE = "ERROR_SAVE";
   const ERROR_DELETE = "ERROR_DELETE";
 
+  //Visual mode determines which appointment version is rendered (mode && statements below)
   const { mode, transition, back } = useVisualMode(
     props.interview ? SHOW : EMPTY
   );
 
   //Pass to form component to save info entered into form
   function save(name, interviewer) {
+
     //New interview object created when save is clicked
     const interview = {
       student: name,
@@ -38,11 +41,11 @@ export default function Appointment(props) {
     //Switch to saving icon while we await server response
     transition(SAVING);
 
-    //Wait on server response for updating the interview object in the db
+    //Call bookInterview function
     props.bookInterview(props.id, interview)
-    //Once updated, display newly created appointment
+    //Once db updated, display newly created appointment
     .then(() => transition(SHOW))
-    //if error, display error save message
+    //if error updating db, display error save message
     .catch(() => transition(ERROR_SAVE, true));
     
     ///ALTERNATIVE WAY TO PROMISE FOR save: ADD async in front of function bookInterview. (also in front of function save)
@@ -53,13 +56,13 @@ export default function Appointment(props) {
     // if (response) {
     //   transition(SHOW)
     // };
-  }
+  };
 
   //When button clicked to delete appointment, prompt user to confirm delete
   function deleteInterviewPrompt() {
     //Show confirm component 
     transition(CONFIRM);
-  }
+  };
 
   //If the user presses confirm in confirm component, actually do delete the appointment
   function deleteInterviewConfirm() {
@@ -73,14 +76,14 @@ export default function Appointment(props) {
     .then(() => transition(EMPTY))
     //if error, display error delete message
     .catch(() => transition(ERROR_DELETE, true));
-  }
+  };
   
   return (
     
     <article className="appointment">
+
       <Header time={props.time} />
-      {/* DEPRECATED, SEE BELOW FOR REPLACEMENT */}
-      {/* {props.interview ? <Show student={props.interview.student} interviewer={props.interview.interviewer} /> : <Empty />} */}
+      {/* Only one of the following is displayed, depending on the mode which is set by the transition() function */}
       { mode === EMPTY && <Empty onAdd={() => transition(CREATE)} />}
       { mode === SHOW && (
         <Show

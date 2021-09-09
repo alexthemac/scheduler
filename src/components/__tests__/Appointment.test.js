@@ -1,3 +1,4 @@
+//Jest test (given to us by LHL)
 /*
   We are rendering `<Application />` down below, so we need React.createElement
 */
@@ -19,7 +20,7 @@ import Appointment from "components/Appointment";
 */
 
 //describe is used if want to group a series of tests, not required if just single test
-//it is the exact same as test. it = test
+//"it" is the exact same as "test". it = test
 describe("Appointment", () => {
   it("renders without crashing", () => {
     render(<Appointment />);

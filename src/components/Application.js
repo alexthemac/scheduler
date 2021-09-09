@@ -5,6 +5,7 @@ import Appointment from "./Appointment/index";
 import { getAppointmentsForDay, getInterview, getInterviewersForDay } from "helpers/selectors";
 import useApplicationData from "hooks/useApplicationData";
 
+//Main component that determines the layout of the whole app
 export default function Application(props) {
   
   //Import state data and functions that modify state from useApplicationData
@@ -28,21 +29,17 @@ export default function Application(props) {
     
     return (
       <Appointment
-      //Must include key regardless of option
-      key={appointment.id}
+        //Must include key regardless of option
+        key={appointment.id}
 
-      //option 1: pass each prop one by one:
-      id={appointment.id}
-      time={appointment.time}
-      interview={interview} 
-      interviewers={interviewers}
-      bookInterview={bookInterview}
-      cancelInterview={cancelInterview}
-
-      //DEPRECATED AS NEED TO UPDATE interview WITH INFO FROM getInterview function
-      //option 2: or we can use the spread operator which does the same as above
-      // {...appointment}
-    /> 
+        //option 1: pass each prop one by one:
+        id={appointment.id}
+        time={appointment.time}
+        interview={interview} 
+        interviewers={interviewers}
+        bookInterview={bookInterview}
+        cancelInterview={cancelInterview}
+      /> 
     );
   });
 
@@ -55,6 +52,7 @@ export default function Application(props) {
           alt="Interview Scheduler"
         />
         <hr className="sidebar__separator sidebar--centered" />
+
         <nav className="sidebar__menu">
           <DayList
             days={state.days}
@@ -62,17 +60,20 @@ export default function Application(props) {
             setDay={setDay}
           />
         </nav>
+
         <img
           className="sidebar__lhl sidebar--centered"
           src="images/lhl.png"
           alt="Lighthouse Labs"
         />
       </section>
+
       <section className="schedule">
         {appointments}
         {/* due to the way the CSS is setup, need to add one extra appointment at end to view all */}
         <Appointment key="last" time="5pm" /> 
       </section>
+      
     </main>
   );
 }

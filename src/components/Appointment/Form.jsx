@@ -1,17 +1,16 @@
-import React, { useState } from 'react' //useState is different from the other .jsx files because we are worried about states now
+import React, { useState } from 'react' //useState imported because we are creating and modifying states in this file
 
 import Button from "../Button";
 import InterviewerList from "components/InterviewerList";
 
-
-
+//Component shown when user clicks on + sign to create new appointment
 export default function Form (props) {
 
   //If there is a student name, set initial state to student name (edit appointment), if not leave blank (create new appointment)
   const [name, setName] = useState(props.name || "");
   //If there is an interviewer, set initial state to interviewer (edit appointment), if not leave blank (create new appointment)
   const [interviewer, setInterviewer] = useState(props.interviewer || null);
-  //Error state
+  //Error state (to deal with student name being left blank)
   const [error, setError] = useState("");
 
   //Reset form inputs to blank for name and non selected for interviewer
@@ -43,7 +42,9 @@ export default function Form (props) {
 
   return (
     <main className="appointment__card appointment__card--create">
+
       <section className="appointment__card-left">
+
         <form autoComplete="off" onSubmit={event => event.preventDefault()}>
           <input
             className="appointment__create-input text--semi-bold"
@@ -53,20 +54,22 @@ export default function Form (props) {
             onChange={(event) => setName(event.target.value)}
             value={name}
             data-testid="student-name-input"
-
-            /*
-              This must be a controlled component
-            */
           />
-
         </form>
+
         <section className="appointment__validation">{error}</section>
+
         <InterviewerList interviewers={props.interviewers} interviewer={interviewer} setInterviewer={setInterviewer} />
+
       </section>
+
       <section className="appointment__card-right">
         <section className="appointment__actions">
+
           <Button danger onClick={cancel}>Cancel</Button>
+          
           <Button confirm onClick={validate}>Save</Button>
+
         </section>
       </section>
     </main>

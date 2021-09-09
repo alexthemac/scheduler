@@ -1,6 +1,8 @@
 import React from "react";
 
+//Component shown when user tries to delete or save appointment but there is an error connecting to scheduler-api server
 export default function Error (props) {
+  
   return (
     <main className="appointment__card appointment__card--error">
       <section className="appointment__error-message">

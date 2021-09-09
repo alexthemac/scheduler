@@ -1,5 +1,6 @@
 import React from "react";
 
+//Component shown when saving or deleting as it transitions from form to show or vice versa
 export default function Status(props) {
 
   return (

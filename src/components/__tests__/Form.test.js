@@ -1,9 +1,9 @@
+//Jest tests (testing Form functionality)
 import React from "react";
 
-import { render, cleanup, getByPlaceholderText, fireEvent, queryByText } from "@testing-library/react";
+import { render, cleanup, fireEvent } from "@testing-library/react";
 
 import Form from "components/Appointment/Form";
-
 
 afterEach(cleanup);
 
@@ -29,11 +29,10 @@ describe("Form", () => {
   });
 
   it("validates that the student name is not blank", () => {
-    /* 1. Create the mock onSave function */
+    // Create the mock onSave function
     const onSave = jest.fn();
-
   
-    /* 2. Render the Form with interviewers and the onSave mock function passed as an onSave prop, the name prop should be blank or undefined */
+    //Render the Form with interviewers and the onSave mock function passed as an onSave prop, the name prop should be blank or undefined
     const { getByText } = render(
       <Form 
         interviewers={interviewers} 
@@ -42,7 +41,7 @@ describe("Form", () => {
       /> 
     );
 
-    /* 3. Click the save button */
+    //Click the save button
     fireEvent.click(getByText("Save"));
   
     //expect "student name cannot be blank" to be shown when save button clicked
@@ -55,7 +54,7 @@ describe("Form", () => {
     //Create mock save function
     const onSave = jest.fn();
 
-    //Render the frorm
+    //Render the form
     const { getByText, getByPlaceholderText, queryByText } = render(
       <Form interviewers={interviewers} onSave={onSave} />
     );
@@ -78,11 +77,10 @@ describe("Form", () => {
     //Expect text in queryByText to not be present as there is a name now
     expect(queryByText(/student name cannot be blank/i)).toBeNull();
 
-    //onSave function should have been called once and name paramater should have argument of "Lydia Miller-Jones"
+    //onSave function should have been called once and name parameter should have argument of "Lydia Miller-Jones"
     expect(onSave).toHaveBeenCalledTimes(1);
     expect(onSave).toHaveBeenCalledWith("Lydia Miller-Jones", null);
-
-  })
+  });
 
   it("calls onCancel and resets the input field", () => {
     //Creates mock cancel function
@@ -120,7 +118,8 @@ describe("Form", () => {
   });
 
   //////DEPRECTATED BY "can succesfully save after trying to submit an empty student name" ///////////////////////////////////
-  //////SEE W8D2 Last activity of day for details on this
+  //////SEE W8D2 Last activity of day for details on this ///////////////////////////////////
+  
   // //This test now demonstrates coverage overlap because the test below it does the same thing but in a more
   // //similar way to how a user would interact with it
   // //It is still useful as it tests that we do not show the error message after we click the "Save" with a valid input value.

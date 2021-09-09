@@ -4,12 +4,12 @@ import PropTypes from 'prop-types';
 import './InterviewerList.scss'
 import InterviewerListItem from "./InterviewerListItem";
 
+//Component that represents the list of interviewers (appears when creating or editing an interview)
 function InterviewerList (props) {
 
-  const { interviewers, interviewer, setInterviewer} = props;
+  const { interviewers, setInterviewer} = props;
 
-
-
+  //Modify the interviewers array to contain html
   const interviewerListItem = interviewers.map( (interviewer) => 
     <InterviewerListItem
       key={interviewer.id}
@@ -18,7 +18,7 @@ function InterviewerList (props) {
       //quick way to assign each key value pair as a new props, ie id={interviewer.id}, name={interviewer.name} etc..
       {...interviewer}
 
-      //compare the interviewer prop value to the interviewer objects id 
+      //compare the interviewer prop value to the interviewer objects id
       selected={props.interviewer === interviewer.id}
 
       setInterviewer={() => setInterviewer(interviewer.id)}

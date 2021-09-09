@@ -1,3 +1,4 @@
+//Jest tests (testing various Button functionality)
 import React from "react";
 
 import { render, cleanup, fireEvent } from "@testing-library/react";
@@ -31,6 +32,7 @@ it("renders a danger button", () => {
 });
 
 it("renders a clickable button", () => {
+  //jest.fn() is a dummy function used to simulate the actual function.
   const handleClick = jest.fn();
   const { getByText } = render(
     <Button onClick={handleClick}>Clickable</Button>
@@ -44,6 +46,7 @@ it("renders a clickable button", () => {
 });
 
 it("renders a disabled button", () => {
+
   const handleClick = jest.fn();
   const { getByText } = render(
     <Button disabled onClick={handleClick}>

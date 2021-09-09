@@ -1,3 +1,5 @@
+//Jest tests (testing selectors functions)
+
 import { getAppointmentsForDay, getInterview, getInterviewersForDay } from "helpers/selectors";
 
 const state = {
