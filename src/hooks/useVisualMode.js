@@ -1,17 +1,17 @@
 import {useState} from 'react';
 
+//Function (custom hook) to set the views for Appointment components. 
 export default function useVisualMode(initial) {
 
   const [mode, setMode] = useState(initial);
   //Create array to keep track of states. Allows us to go back to previous state
   const [history, setHistory] = useState([initial]);
 
-  // console.log(history);
-
   //Moves mode forward (set default replace to false if no value)
   const transition = (newMode, replace = false) => {
 
     setMode(newMode);
+    
     //replace determines whether we want to replace the last item in the history array with newMode, or just add newMode onto end of array.
     if(replace) {
       setHistory(prev => {
@@ -23,8 +23,8 @@ export default function useVisualMode(initial) {
         //...creates new copy of the prev array, then add newMode on end of array. Need to do copy as shouldn't modify direct
         return [...prev, newMode]
       })
-    }
-  }
+    };
+  };
 
   //Moves mode backward
   const back = () => {
@@ -37,8 +37,9 @@ export default function useVisualMode(initial) {
         returnArr.pop();
         return returnArr;
       })
-    }
-  }
+    };
+  };
 
+  //Object to be used in Application.js
   return { mode, transition, back }; 
 }

@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from "axios";
 
-
 //Function (custom hook) that exports an array of states and functions required in Application.js (cleans up Application.js)
 export default function useApplicationData () {
 
@@ -80,8 +79,6 @@ export default function useApplicationData () {
       [id]: appointment
     };
 
-
-
     //Check for remaining spots
     const remainingSpots = function (day, appointments) {
 
@@ -95,19 +92,19 @@ export default function useApplicationData () {
         }
       }
       return spots;
-    }
+    };
 
     //create new days array with updated spots
     let daysNew = state.days.map(day => { 
       return {...day, spots: remainingSpots(day, appointments)  }
     });
 
-    //Query server to add newly created interview object to appointments
     const queryURL = `http://localhost:8001/api/appointments/${id}`;
-    let bookReturn = axios.put(queryURL, {interview})
+    //Query server to add newly created interview object to appointments
+    let bookReturn = axios.put(queryURL, {interview});
 
     //Set state to include new appointments and daysNew
-    bookReturn.then(() => { setState((prev) => ({...prev, appointments, days: daysNew})) })
+    bookReturn.then(() => { setState((prev) => ({...prev, appointments, days: daysNew})) });
     // bookReturn.then(() => { setState({...state, appointments} )})
     // cancelReturn.then(() => { setState((prev) => ({...prev, appointments, days: daysNew}))})
 
@@ -122,7 +119,7 @@ export default function useApplicationData () {
     // if (response) {
     //   return true
     // }
-  }
+  };
 
   function cancelInterview(id) {
 
@@ -174,18 +171,19 @@ export default function useApplicationData () {
         }
       }
       return spots;
-    }
+    };
 
     //create new days array with updated spots
     let daysNew = state.days.map(day => { 
       return {...day, spots: remainingSpots(day, appointments)  }
     });
 
-
     const queryURL = `http://localhost:8001/api/appointments/${id}`;
-    let cancelReturn = axios.delete(queryURL)
+    //Query server to add newly created interview object (with null interview spot) to appointments
+    let cancelReturn = axios.delete(queryURL);
 
-    cancelReturn.then(() => { setState((prev) => ({...prev, appointments, days: daysNew}))})
+    //Set state to include new appointments and daysNew
+    cancelReturn.then(() => { setState((prev) => ({...prev, appointments, days: daysNew}))});
     // cancelReturn.then(() => { setState({...state, appointments})})
 
 
@@ -213,16 +211,18 @@ export default function useApplicationData () {
       setState(prev => ({...prev, days: all[0].data, appointments: all[1].data, interviewers: all[2].data }));
    
     });
-  }, [])
+  }, []);
 
   // useEffect(() => console.log (`${JSON.stringify(state.days.spots)} spot has changed!`), [state.appointments])
 
+  //Object to be used in Application.js
   const returnObj = {
     state,
     setDay,
     bookInterview,
     cancelInterview
-  }
+  };
 
   return returnObj;
-}
+
+};
