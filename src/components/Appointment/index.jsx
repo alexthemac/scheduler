@@ -47,15 +47,6 @@ export default function Appointment(props) {
     .then(() => transition(SHOW))
     //if error updating db, display error save message
     .catch(() => transition(ERROR_SAVE, true));
-    
-    ///ALTERNATIVE WAY TO PROMISE FOR save: ADD async in front of function bookInterview. (also in front of function save)
-    // //Wait on server response for updating the interivew object in the db
-    // let response = await props.bookInterview(props.id, interview)
-    
-    // //Once we recieve response, transition to show the new appointment
-    // if (response) {
-    //   transition(SHOW)
-    // };
   };
 
   //When button clicked to delete appointment, prompt user to confirm delete

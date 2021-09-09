@@ -4,12 +4,6 @@ import axios from "axios";
 //Function (custom hook) that exports an array of states and functions required in Application.js (cleans up Application.js)
 export default function useApplicationData () {
 
-  //REPLACED BY SINGLE STATE OBJECT BELOW
-  // const [day, setDay] = useState("Monday");
-  // const [days, setDays] = useState([]);
-  // const [appointment, setAppointments] = useState({});
-
-  //NEW SINGLE STATE OBJECT REPLACES ABOVE
   const [state, setState] = useState({
     day: "Monday",
     days: [],
@@ -105,20 +99,9 @@ export default function useApplicationData () {
 
     //Set state to include new appointments and daysNew
     bookReturn.then(() => { setState((prev) => ({...prev, appointments, days: daysNew})) });
-    // bookReturn.then(() => { setState({...state, appointments} )})
-    // cancelReturn.then(() => { setState((prev) => ({...prev, appointments, days: daysNew}))})
-
     
     //return query promise to be used in other file
     return bookReturn;
-    
-    ///ALTERNATIVE WAY TO PROMISE FOR bookReturn ADD async in front of function bookInterview. (also in front of function save)
-    // const queryURL = `http://localhost:8001/api/appointments/${id}`;
-    // let response = await axios.put(queryURL, {interview})
-    //   .then(() => { setState({...state, appointments} ); return true; })
-    // if (response) {
-    //   return true
-    // }
   };
 
   function cancelInterview(id) {
@@ -134,29 +117,6 @@ export default function useApplicationData () {
       ...state.appointments,
       [id]: appointment
     };
-
-    //FOLLOWING DID NOT WORK FOR CREATIG NEW ARRAY-----------------------
-    // let daysNew = Array.from([...state.days]);
-    
-    // let daysNew = state.days.slice();
-
-    //create new days array
-    // let daysNew = [
-    //   ...state.days
-    // ];
-
-    //THIS ALWAYS MODIFIES state.days for some reason
-    // daysNew[dayIndex].spots = 100;
-
-
-    // days[0].spots = 100;
-
-
-    // //Find index of day where appointment is deleted
-    // const dayIndex = daysNew.findIndex((day) => state.day === day.name )
-
-    //-------------------------------------
-
 
     //Check for remaining spots
     const remainingSpots = function (day, appointments) {
@@ -184,21 +144,9 @@ export default function useApplicationData () {
 
     //Set state to include new appointments and daysNew
     cancelReturn.then(() => { setState((prev) => ({...prev, appointments, days: daysNew}))});
-    // cancelReturn.then(() => { setState({...state, appointments})})
 
-
-    // .then(() => { setState({...state, days})})
-  
     return cancelReturn;
-  }
-
-    // // //Use axios to query the scheduler-api server running on port 8001
-  // // ONLY FOR A SINGLE QUERY (DAYS). REPLACED BY USEEFFECT BELOW WITH PROMISE.ALL FOR 3 queries
-  // useEffect(() => {
-  //   const queryURL = 'http://localhost:8001/api/days';
-  //     axios.get(queryURL)
-  //       .then((response) => {setDays(response.data);})
-  //     }, []);
+  };
 
   //Perform 3 get requests at same time and wait for all to respond before setting state (data is dependant on each other)
   useEffect(()=> {
@@ -212,8 +160,6 @@ export default function useApplicationData () {
    
     });
   }, []);
-
-  // useEffect(() => console.log (`${JSON.stringify(state.days.spots)} spot has changed!`), [state.appointments])
 
   //Object to be used in Application.js
   const returnObj = {

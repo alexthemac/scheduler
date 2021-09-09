@@ -117,57 +117,6 @@ describe("Form", () => {
     expect(onCancel).toHaveBeenCalledTimes(1);
   });
 
-  //////DEPRECTATED BY "can succesfully save after trying to submit an empty student name" ///////////////////////////////////
-  //////SEE W8D2 Last activity of day for details on this ///////////////////////////////////
-  
-  // //This test now demonstrates coverage overlap because the test below it does the same thing but in a more
-  // //similar way to how a user would interact with it
-  // //It is still useful as it tests that we do not show the error message after we click the "Save" with a valid input value.
-  // xit("calls onSave function when the name is defined", () => {
-  //   /* 1. Create the mock onSave function */
-  //   const onSave = jest.fn();
-  
-  //   /* 2. Render the Form with interviewers, name and the onSave mock function passed as an onSave prop */
-  //   const { getByText, queryByText } = render(
-  //     <Form 
-  //       interviewers={interviewers} 
-  //       onSave={onSave} 
-  //       name="Lydia Miller-Jones"
-  //     /> 
-  //   );
-
-  //   /* 3. Click the save button */ //THIS IS NOT THE FUNCTION NAME, BUT THE ACTUAL BUTTON TEXT
-  //   fireEvent.click(getByText("Save"));
-  
-  //   //expect "student name cannot be blank" to NOT be shown when save button clicked
-  //   //and a name is present in the text input field 
-  //   expect(queryByText(/student name cannot be blank/i)).toBeNull();
-  //   expect(onSave).toHaveBeenCalledTimes(1);
-  //   expect(onSave).toHaveBeenCalledWith("Lydia Miller-Jones", null);
-  // });
-
-  // it("submits the name entered by the user", () => {
-    
-  //   const onSave = jest.fn();
-
-  //   //Render with props (notice this time no name prop is passed in)
-  //   const { getByText, getByPlaceholderText } = render(
-  //     <Form interviewers={interviewers} onSave={onSave} />
-  //   );
-
-  //   //Target the input with placeholder text "Enter Student Name"
-  //   const input = getByPlaceholderText("Enter Student Name");
-
-  //   //Change the value of the text field from above to "Lydia Miller-Jones"
-  //   fireEvent.change(input, { target: { value: "Lydia Miller-Jones" } });
-  //   //"Save" via Save button
-  //   fireEvent.click(getByText("Save"));
-
-  //   expect(onSave).toHaveBeenCalledTimes(1);
-  //   expect(onSave).toHaveBeenCalledWith("Lydia Miller-Jones", null);
-
-  // });
-
 });
 
 

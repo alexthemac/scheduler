@@ -15,10 +15,10 @@ export function getAppointmentsForDay(state, day) {
     
           if (appointment == key) {
             returnArray.push(state.appointments[key])
-          }
-        }
-      }
-    }
+          };
+        };
+      };
+    };
   return returnArray;
 };
 
@@ -61,9 +61,10 @@ export function getInterviewersForDay(state, day) {
 
         if (interviewer == key) {
           returnArray.push(state.interviewers[key])
-        }
-      }
-    }
-  }  
-return returnArray;
+        };
+      };
+    };
+  };
+
+  return returnArray;
 };
