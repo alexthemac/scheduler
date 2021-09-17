@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from "axios";
 
+
 //Function (custom hook) that exports an array of states and functions required in Application.js (cleans up Application.js)
 export default function useApplicationData () {
 
@@ -161,6 +162,33 @@ export default function useApplicationData () {
     });
   }, []);
 
+  // //Stretch work webs socket
+
+  useEffect(() => {
+    //Setup new websocket connection by creating webSocket object
+    const webSocket = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
+
+    //When new websocket connection opens, send "ping" to server
+    webSocket.onopen = function (event) {
+      webSocket.send("ping");
+    };
+
+    //When message recived from server
+    webSocket.onmessage = function (event) {
+
+      //Convert returned string message to object via JSON.parse
+      const msg = JSON.parse(event.data);
+      //Console log the message
+      console.log("Message Recieved: ", msg);
+
+      // setState((prev) => {...prev, } )
+
+    }
+  }, []);
+
+ 
+  
+  
   //Object to be used in Application.js
   const returnObj = {
     state,
