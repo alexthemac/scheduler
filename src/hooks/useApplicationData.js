@@ -5,12 +5,6 @@ import axios from "axios";
 //Function (custom hook) that exports an array of states and functions required in Application.js (cleans up Application.js)
 export default function useApplicationData () {
 
-  // const webSocket = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
-
-  // webSocket.onopen = function (event) {
-  //       // webSocket.send("ping");
-  //       console.log("!!!!!Websocket opened!!!!!!")
-  //     };
 
   const [state, setState] = useState({
     day: "",
@@ -66,6 +60,32 @@ export default function useApplicationData () {
 
   const setDay = day => setState({ ...state, day });
 
+  //Check for remaining spots for a day
+  const remainingSpots = function (day, appointments) {
+
+    let spots = 0;
+
+    //Check inside each appointment (using app, appointment id) to see if the interview is null or not
+    for (const app of day.appointments) {
+      //If current interview is null, increment the spots
+      if (appointments[app].interview === null) {
+        spots++;
+      }
+    }
+    return spots;
+  };
+
+  //Update the day with the correct number of spots
+  const updateSpots = function (appointments) {
+
+    //create new days array with updated spots
+    let daysNew = state.days.map(day => { 
+      return {...day, spots: remainingSpots(day, appointments)  }
+    });
+    
+    return daysNew;
+  };
+
   //Pass to each appointment component (needs to be async funtion for query to work)
   function bookInterview(id, interview) {
 
@@ -81,34 +101,14 @@ export default function useApplicationData () {
       [id]: appointment
     };
 
-    //Check for remaining spots
-    const remainingSpots = function (day, appointments) {
-
-      let spots = 0;
-
-      //Check inside each appointment (using app, appointment id) to see if the interview is null or not
-      for (const app of day.appointments) {
-        //If current interview is null, increment the spots
-        if (appointments[app].interview === null) {
-          spots++;
-        }
-      }
-      return spots;
-    };
-
-    //create new days array with updated spots
-    let daysNew = state.days.map(day => { 
-      return {...day, spots: remainingSpots(day, appointments)  }
-    });
-
     // const queryURL = `http://localhost:8001/api/appointments/${id}`;
     const queryURL = `${process.env.REACT_APP_API_BASE_URL}/api/appointments/${id}`;
-    
+
     //Query server to add newly created interview object to appointments
     let bookReturn = axios.put(queryURL, {interview});
 
     //Set state to include new appointments and daysNew
-    bookReturn.then(() => { setState((prev) => ({...prev, appointments, days: daysNew})) });
+    bookReturn.then(() => { setState((prev) => ({...prev, appointments, days: updateSpots(appointments)})) });
     
     //return query promise to be used in other file
     return bookReturn;
@@ -128,27 +128,6 @@ export default function useApplicationData () {
       [id]: appointment
     };
 
-    //Check for remaining spots
-    const remainingSpots = function (day, appointments) {
-
-      let spots = 0;
-
-      //Check inside each appointment (using app, appointment id) to see if the interview is null oro not
-      for (const app of day.appointments) {
-        //If current interview is null, increment the spots
-        if (appointments[app].interview === null) {
-          spots++;
-        }
-      }
-      return spots;
-    };
-
-    //create new days array with updated spots
-    let daysNew = state.days.map(day => { 
-      return {...day, spots: remainingSpots(day, appointments)  }
-    });
-
-
     // const queryURL = `http://localhost:8001/api/appointments/${id}`;
     const queryURL = `${process.env.REACT_APP_API_BASE_URL}/api/appointments/${id}`;
 
@@ -157,7 +136,7 @@ export default function useApplicationData () {
     let cancelReturn = axios.delete(queryURL);
 
     //Set state to include new appointments and daysNew
-    cancelReturn.then(() => { setState((prev) => ({...prev, appointments, days: daysNew}))});
+    cancelReturn.then(() => { setState((prev) => ({...prev, appointments, days: updateSpots(appointments)}))});
 
     console.log("CANCEL STATE", state)
     return cancelReturn;
