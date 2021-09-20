@@ -1,64 +1,114 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useReducer } from 'react';
 import axios from "axios";
 
 
 //Function (custom hook) that exports an array of states and functions required in Application.js (cleans up Application.js)
 export default function useApplicationData () {
 
+  const SET_DAY = "SET_DAY";
+  const SET_APPLICATION_DATA = "SET_APPLICATION_DATA";
+  const SET_INTERVIEW = "SET_INERVIEW";
 
-  const [state, setState] = useState({
-    day: "",
+  //ALTERNATIVE TO USING SET STATE
+  //Define the dispatch actions 
+  function reducer(state, action) {
+    
+    switch (action.type) {
+
+      case SET_DAY:
+        return { 
+          ...state, 
+          day: action.day 
+        };
+      case SET_APPLICATION_DATA:
+        return {
+          ...state, 
+          days: action.days, 
+          appointments: action.appointments, 
+          interviewers: action.interviewers
+        };
+      case SET_INTERVIEW:
+        return {
+          ...state, 
+          appointments: action.appointments, 
+          days: action.days
+        };
+      default:
+        throw new Error(
+          `Tried to reduce with unsupported action type: ${action.type}`
+        );   
+    }  
+
+  };
+
+  //Define initialState
+  const initialState = {
+    day: "Monday",
     days: [],
-    appointments: {
-      // 1: {
-      //   id: 1,
-      //   time: "12pm",
-      // },
-      // 2: {
-      //   id: 2,
-      //   time: "1pm",
-      //   interview: {
-      //     student: "Lydia Miller-Jones",
-      //     interviewer: {
-      //       id: 1,
-      //       name: "Sylvia Palmer",
-      //       avatar: "https://i.imgur.com/LpaY82x.png",
-      //     }
-      //   }
-      // },
-      // 3: {
-      //   id: 3,
-      //   time: "2pm",
-      // },
-      // 4: {
-      //   id: 4,
-      //   time: "3pm",
-      //   interview: {
-      //     student: "Alex M",
-      //     interviewer: {
-      //       id: 5,
-      //       name: "Sven Jones",
-      //       avatar: "https://i.imgur.com/twYrpay.jpg",
-      //     }
-      //   }
-      // },
-      // 5: {
-      //   id: 5,
-      //   time: "4pm",
-      //   interview: {
-      //     student: "John Cena",
-      //     interviewer: {
-      //       id: 3,
-      //       name: "Mildred Nazir",
-      //       avatar: "https://i.imgur.com/T2WwVfS.png",
-      //     }
-      //   }
-      // }
-    },
+    appointments: {},
     interviewers: {}
-  });
+  };
 
-  const setDay = day => setState({ ...state, day });
+  //ALTERNATIVE TO USING useState and setState
+  const [state, dispatch] = useReducer(reducer, initialState);
+ 
+  // const [state, setState] = useState({
+  //   day: "",
+  //   days: [],
+  //   appointments: {
+  //     // 1: {
+  //     //   id: 1,
+  //     //   time: "12pm",
+  //     // },
+  //     // 2: {
+  //     //   id: 2,
+  //     //   time: "1pm",
+  //     //   interview: {
+  //     //     student: "Lydia Miller-Jones",
+  //     //     interviewer: {
+  //     //       id: 1,
+  //     //       name: "Sylvia Palmer",
+  //     //       avatar: "https://i.imgur.com/LpaY82x.png",
+  //     //     }
+  //     //   }
+  //     // },
+  //     // 3: {
+  //     //   id: 3,
+  //     //   time: "2pm",
+  //     // },
+  //     // 4: {
+  //     //   id: 4,
+  //     //   time: "3pm",
+  //     //   interview: {
+  //     //     student: "Alex M",
+  //     //     interviewer: {
+  //     //       id: 5,
+  //     //       name: "Sven Jones",
+  //     //       avatar: "https://i.imgur.com/twYrpay.jpg",
+  //     //     }
+  //     //   }
+  //     // },
+  //     // 5: {
+  //     //   id: 5,
+  //     //   time: "4pm",
+  //     //   interview: {
+  //     //     student: "John Cena",
+  //     //     interviewer: {
+  //     //       id: 3,
+  //     //       name: "Mildred Nazir",
+  //     //       avatar: "https://i.imgur.com/T2WwVfS.png",
+  //     //     }
+  //     //   }
+  //     // }
+  //   },
+  //   interviewers: {}
+  // });
+
+  //DEPRECTATED (use Reducer and dispatch now instead)
+  // const setDay = day => setState({ ...state, day });
+
+  const setDay = (day) => dispatch({ type: SET_DAY, day });
+
 
   //Check for remaining spots for a day
   const remainingSpots = function (day, appointments) {
@@ -107,8 +157,11 @@ export default function useApplicationData () {
     //Query server to add newly created interview object to appointments
     let bookReturn = axios.put(queryURL, {interview});
 
+    
     //Set state to include new appointments and daysNew
-    bookReturn.then(() => { setState((prev) => ({...prev, appointments, days: updateSpots(appointments)})) });
+    //DEPRECTATED (use Reducer and dispatch now instead)
+    // bookReturn.then(() => { setState((prev) => ({...prev, appointments, days: updateSpots(appointments)})) });
+    bookReturn.then(() => dispatch({type: SET_INTERVIEW, appointments, days: updateSpots(appointments) }));
     
     //return query promise to be used in other file
     return bookReturn;
@@ -136,9 +189,10 @@ export default function useApplicationData () {
     let cancelReturn = axios.delete(queryURL);
 
     //Set state to include new appointments and daysNew
-    cancelReturn.then(() => { setState((prev) => ({...prev, appointments, days: updateSpots(appointments)}))});
+    //DEPRECTATED (use Reducer and dispatch now instead)
+    // cancelReturn.then(() => { setState((prev) => ({...prev, appointments, days: updateSpots(appointments)}))});
+    cancelReturn.then(() => dispatch({type: SET_INTERVIEW, appointments, days: updateSpots(appointments) }));
 
-    console.log("CANCEL STATE", state)
     return cancelReturn;
   };
 
@@ -157,9 +211,9 @@ export default function useApplicationData () {
       // console.log("ALLLLL1data", all[1].data);
       // console.log("ALLLLL2data", all[2].data);
   
-      setState(prev => ({...prev, days: all[0].data, appointments: all[1].data, interviewers: all[2].data }));
-
-      console.log("axios3 State SYNC......", state);
+      //DEPRECTATED (use Reducer and dispatch now instead)
+      // setState(prev => ({...prev, days: all[0].data, appointments: all[1].data, interviewers: all[2].data }));
+      dispatch({ type: SET_APPLICATION_DATA, days: all[0].data, appointments: all[1].data, interviewers: all[2].data });
 
     })
   }, []);
@@ -193,7 +247,7 @@ export default function useApplicationData () {
 
       console.log("msg recieved state", state);
 
-      setState((prev) => ({...prev}));
+      // setState((prev) => ({...prev}));
     
     // if (msg) {
     //   setState(state.appointments[msg.id].interview = msg.interview)
