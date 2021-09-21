@@ -7,39 +7,100 @@ export default function useApplicationData () {
 
   const SET_DAY = "SET_DAY";
   const SET_APPLICATION_DATA = "SET_APPLICATION_DATA";
-  const SET_INTERVIEW = "SET_INERVIEW";
+  const SET_INTERVIEW = "SET_INTERVIEW";
 
   //ALTERNATIVE TO USING SET STATE
-  //Define the dispatch actions 
+  //Define the dispatch actions (inclduded helper functions in here)
   function reducer(state, action) {
-    
-    switch (action.type) {
 
-      case SET_DAY:
-        return { 
-          ...state, 
-          day: action.day 
-        };
-      case SET_APPLICATION_DATA:
-        return {
-          ...state, 
-          days: action.days, 
-          appointments: action.appointments, 
-          interviewers: action.interviewers
-        };
-      case SET_INTERVIEW:
-        return {
-          ...state, 
-          appointments: action.appointments, 
-          days: action.days
-        };
-      default:
-        throw new Error(
-          `Tried to reduce with unsupported action type: ${action.type}`
-        );   
-    }  
+    //Check for remaining spots for a day
+    const remainingSpots = function (day, appointments) {
 
-  };
+      let spots = 0;
+
+      //Check inside each appointment (using app, appointment id) to see if the interview is null or not
+      for (const app of day.appointments) {
+        //If current interview is null, increment the spots
+        if (appointments[app].interview === null) {
+          spots++;
+        }
+      }
+      return spots;
+    };
+
+    //Update the day with the correct number of spots
+    const updateSpots = function (appointments) {
+
+      //create new days array with updated spots
+      let daysNew = state.days.map(day => { 
+        return {...day, spots: remainingSpots(day, appointments)  }
+      });
+      
+      console.log("--------",daysNew);
+
+      return daysNew;
+    };
+
+    //-----------DISPATCH ACTIONS------------------
+    if(action.type === SET_DAY) {
+      
+      //Destructure
+      const { day } = action.value
+
+      return { 
+        ...state, 
+        day 
+      };
+    };
+
+    if (action.type === SET_APPLICATION_DATA) {
+
+      //Destructure
+      const { days, appointments, interviewers } = action.value
+
+      return {
+        ...state, 
+        days, 
+        appointments, 
+        interviewers
+      };
+    };
+
+    if (action.type === SET_INTERVIEW) {
+
+      console.log("+++++++",action);
+
+      //Destructure
+      const {id, interview} = action.value
+
+      //Create new appointment object from data in form (to be inserted)
+      const appointment = {
+        ...state.appointments[id],
+        interview: interview ? { ...interview } : null
+      };
+
+      //Create new appointments object (to include newly created appointment from above)
+      const appointments = {
+        ...state.appointments,
+        [id]: appointment
+      };
+
+      //Create new days object
+      const days = updateSpots(appointments) 
+      
+      return {
+        ...state, 
+        appointments, 
+        days
+      };
+    };
+
+    //Throw error if none of the actions exists
+    throw new Error(
+      `Tried to reduce with unsupported action type: ${action.type}`
+    );   
+
+  }; 
 
   //Define initialState
   const initialState = {
@@ -107,49 +168,24 @@ export default function useApplicationData () {
   //DEPRECTATED (use Reducer and dispatch now instead)
   // const setDay = day => setState({ ...state, day });
 
-  const setDay = (day) => dispatch({ type: SET_DAY, day });
-
-
-  //Check for remaining spots for a day
-  const remainingSpots = function (day, appointments) {
-
-    let spots = 0;
-
-    //Check inside each appointment (using app, appointment id) to see if the interview is null or not
-    for (const app of day.appointments) {
-      //If current interview is null, increment the spots
-      if (appointments[app].interview === null) {
-        spots++;
-      }
-    }
-    return spots;
-  };
-
-  //Update the day with the correct number of spots
-  const updateSpots = function (appointments) {
-
-    //create new days array with updated spots
-    let daysNew = state.days.map(day => { 
-      return {...day, spots: remainingSpots(day, appointments)  }
-    });
-    
-    return daysNew;
-  };
+  const setDay = (day) => dispatch({ type: SET_DAY, value: {day} });
 
   //Pass to each appointment component (needs to be async funtion for query to work)
   function bookInterview(id, interview) {
 
-    //Create new appointment object from data in form (to be inserted)
-    const appointment = {
-      ...state.appointments[id],
-      interview: { ...interview }
-    };
+    //MOVED TO REDUCERS ABOVE!!!!
+    // //Create new appointment object from data in form (to be inserted)
+    // const appointment = {
+    //   ...state.appointments[id],
+    //   interview: { ...interview }
+    // };
 
-    //Create new appointments object (to include newly created appointment from above)
-    const appointments = {
-      ...state.appointments,
-      [id]: appointment
-    };
+    //MOVED TO REDUCERS ABOVE!!!!
+    // //Create new appointments object (to include newly created appointment from above)
+    // const appointments = {
+    //   ...state.appointments,
+    //   [id]: appointment
+    // };
 
     // const queryURL = `http://localhost:8001/api/appointments/${id}`;
     const queryURL = `${process.env.REACT_APP_API_BASE_URL}/api/appointments/${id}`;
@@ -161,7 +197,7 @@ export default function useApplicationData () {
     //Set state to include new appointments and daysNew
     //DEPRECTATED (use Reducer and dispatch now instead)
     // bookReturn.then(() => { setState((prev) => ({...prev, appointments, days: updateSpots(appointments)})) });
-    bookReturn.then(() => dispatch({type: SET_INTERVIEW, appointments, days: updateSpots(appointments) }));
+    bookReturn.then(() => dispatch({type: SET_INTERVIEW, value: {id, interview}}));
     
     //return query promise to be used in other file
     return bookReturn;
@@ -169,21 +205,21 @@ export default function useApplicationData () {
 
   function cancelInterview(id) {
 
-    //Create new appointment object with null interview data (to be inserted)
-    const appointment = {
-      ...state.appointments[id],
-      interview: null
-    };
+    //MOVED TO REDUCERS ABOVE!!!!
+    // //Create new appointment object with null interview data (to be inserted)
+    // const appointment = {
+    //   ...state.appointments[id],
+    //   interview: null
+    // };
 
-    //Create new appointments object (to include newly created appointment from above)
-    const appointments = {
-      ...state.appointments,
-      [id]: appointment
-    };
+    // //Create new appointments object (to include newly created appointment from above)
+    // const appointments = {
+    //   ...state.appointments,
+    //   [id]: appointment
+    // };
 
     // const queryURL = `http://localhost:8001/api/appointments/${id}`;
     const queryURL = `${process.env.REACT_APP_API_BASE_URL}/api/appointments/${id}`;
-
 
     //Query server to add newly created interview object (with null interview spot) to appointments
     let cancelReturn = axios.delete(queryURL);
@@ -191,12 +227,13 @@ export default function useApplicationData () {
     //Set state to include new appointments and daysNew
     //DEPRECTATED (use Reducer and dispatch now instead)
     // cancelReturn.then(() => { setState((prev) => ({...prev, appointments, days: updateSpots(appointments)}))});
-    cancelReturn.then(() => dispatch({type: SET_INTERVIEW, appointments, days: updateSpots(appointments) }));
+
+    //Must pass in inteview: null as SET_INTERVIEW action is expecting id and interview parameters
+    cancelReturn.then(() => dispatch({type: SET_INTERVIEW, value: {id, interview: null}}));
 
     return cancelReturn;
   };
 
-  
   //Perform 3 get requests at same time and wait for all to respond before setting state (data is dependant on each other)
   //Uses axios base url defined in .env.development or .env.test and appens /api/days etc to it for each request
   useEffect(()=> {
@@ -210,29 +247,38 @@ export default function useApplicationData () {
       // console.log("ALLLLL0data", all[0].data);
       // console.log("ALLLLL1data", all[1].data);
       // console.log("ALLLLL2data", all[2].data);
-  
+
+      //Take the responses and destructure them into array 
+      const [daysRes, appointmentsRes, interviewersRes] = all
+        
       //DEPRECTATED (use Reducer and dispatch now instead)
       // setState(prev => ({...prev, days: all[0].data, appointments: all[1].data, interviewers: all[2].data }));
-      dispatch({ type: SET_APPLICATION_DATA, days: all[0].data, appointments: all[1].data, interviewers: all[2].data });
+      // dispatch({ type: SET_APPLICATION_DATA, days: all[0].data, appointments: all[1].data, interviewers: all[2].data });
+      
+      dispatch({ 
+        type: SET_APPLICATION_DATA, 
+        value: { 
+          days: daysRes.data,
+          appointments: appointmentsRes.data,
+          interviewers: interviewersRes.data
+        } 
+      });
 
     })
   }, []);
 
   
-
-  // //Stretch work webs socket
-
+  //STRETCH WORK WEB SOCKETS
   useEffect(() => {
     //Setup new websocket connection by creating webSocket object
     const webSocket = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
 
-    // //When new websocket connection opens, send "ping" to server
-    // webSocket.onopen = function (event) {
-    //   webSocket.send("ping");
-    // };
+    //When new websocket connection opens, send "ping" to server
+    webSocket.onopen = function (event) {
+      webSocket.send("ping");
+    };
 
-    console.log("USE EFFECT WS Start State ", state);
-
+    // console.log("USE EFFECT WS Start State ", state);
 
     webSocket.onmessage = function (event) {
 
@@ -245,7 +291,11 @@ export default function useApplicationData () {
 
       console.log("msg.interview", msg.interview);
 
-      console.log("msg recieved state", state);
+      //Desructure message
+      const { id, interview } = msg
+
+      //Pass to set interview   
+      dispatch({type: SET_INTERVIEW, value: {id, interview}});
 
       // setState((prev) => ({...prev}));
     
