@@ -25,10 +25,15 @@ export default function Form (props) {
     reset();
   };
 
-  //Validates whether name is blank WHEN confirm button is clicked. If blank, setsError. If not blank, call onSave function.
+  //Validates whether name or interviewer is blank WHEN confirm button is clicked. If blank, setsError. If not blank, call onSave function.
   function validate() {
     if (name === "") {
       setError("Student name cannot be blank");
+      return;
+    }
+
+    if (interviewer === null) {
+      setError("Interviewer cannot be blank")
       return;
     }
 
