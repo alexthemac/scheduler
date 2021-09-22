@@ -12,8 +12,8 @@ export function getAppointmentsForDay(state, day) {
       //Check for appointments in state.appointments that match the appointments associated with the filteredDays array
       for (const appointment of filteredDays[0].appointments) {
         for (const key in state.appointments){
-    
-          if (appointment == key) {
+          //appointment is an int and key is a string, need to convert to compare
+          if (String(appointment) === key) {
             returnArray.push(state.appointments[key])
           };
         };
@@ -58,8 +58,9 @@ export function getInterviewersForDay(state, day) {
     //Check for interviewers in state.interviewers that match the interviewer associated with the filteredDays array
     for (const interviewer of filteredDays[0].interviewers) {
       for (const key in state.interviewers){
-
-        if (interviewer == key) {
+        
+        //interviewer is an int and key is a string, need to convert to compare
+        if (String(interviewer) === key) {
           returnArray.push(state.interviewers[key])
         };
       };

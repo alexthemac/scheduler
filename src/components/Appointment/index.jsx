@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 
 import "./styles.scss";
 
@@ -68,6 +68,18 @@ export default function Appointment(props) {
     //if error, display error delete message
     .catch(() => transition(ERROR_DELETE, true));
   };
+
+  //For websockets
+  //To actually show the new state if they change state in another browser
+  useEffect(() => {
+    if (props.interview && mode === EMPTY) {
+      transition(SHOW);
+    }
+    if (props.interview === null && mode === SHOW) {
+      transition(EMPTY);
+    }
+  }, [props.interview, transition, mode])
+
   
   return (
     
@@ -76,7 +88,7 @@ export default function Appointment(props) {
       <Header time={props.time} />
       {/* Only one of the following is displayed, depending on the mode which is set by the transition() function */}
       { mode === EMPTY && <Empty onAdd={() => transition(CREATE)} />}
-      { mode === SHOW && (
+      { mode === SHOW && props.interview && (
         <Show
           student={props.interview.student}
           interviewer={props.interview.interviewer}

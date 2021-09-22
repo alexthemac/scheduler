@@ -1,10 +1,13 @@
-import { useState, useEffect, useReducer } from 'react';
+//DEPRECATED, useReducer used now instead of useState
+// import { useState, useEffect } from 'react';
+import { useEffect, useReducer } from 'react';
 import axios from "axios";
 
 
 //Function (custom hook) that exports an array of states and functions required in Application.js (cleans up Application.js)
 export default function useApplicationData () {
 
+  //Define strings for reducer, not required but nice to have
   const SET_DAY = "SET_DAY";
   const SET_APPLICATION_DATA = "SET_APPLICATION_DATA";
   const SET_INTERVIEW = "SET_INTERVIEW";
@@ -36,7 +39,7 @@ export default function useApplicationData () {
         return {...day, spots: remainingSpots(day, appointments)  }
       });
       
-      console.log("--------",daysNew);
+      // console.log("--------",daysNew);
 
       return daysNew;
     };
@@ -68,7 +71,7 @@ export default function useApplicationData () {
 
     if (action.type === SET_INTERVIEW) {
 
-      console.log("+++++++",action);
+      // console.log("+++++++",action);
 
       //Destructure
       const {id, interview} = action.value
@@ -253,7 +256,8 @@ export default function useApplicationData () {
         
       //DEPRECTATED (use Reducer and dispatch now instead)
       // setState(prev => ({...prev, days: all[0].data, appointments: all[1].data, interviewers: all[2].data }));
-      // dispatch({ type: SET_APPLICATION_DATA, days: all[0].data, appointments: all[1].data, interviewers: all[2].data });
+      //INCORRECT WAY TO USE dispatch, see next below for proper way (pass only type and and value)
+      // dispatch({ type: SET_APPLICATION_DATA, days: all[0].data, appointments: all[1].data, interviewers: all[2].data }); 
       
       dispatch({ 
         type: SET_APPLICATION_DATA, 
@@ -278,32 +282,23 @@ export default function useApplicationData () {
       webSocket.send("ping");
     };
 
-    // console.log("USE EFFECT WS Start State ", state);
-
     webSocket.onmessage = function (event) {
 
       //Convert returned string message to object via JSON.parse
       const msg = JSON.parse(event.data);
       //Console log the message
-      console.log("Message Recieved: ", msg);
+      // console.log("Message Recieved: ", msg);
 
-      console.log("msg.id", msg.id);
+      // console.log("msg.id", msg.id);
 
-      console.log("msg.interview", msg.interview);
+      // console.log("msg.interview", msg.interview);
 
       //Desructure message
       const { id, interview } = msg
 
       //Pass to set interview   
       dispatch({type: SET_INTERVIEW, value: {id, interview}});
-
-      // setState((prev) => ({...prev}));
-    
-    // if (msg) {
-    //   setState(state.appointments[msg.id].interview = msg.interview)
-    // }
     };
-
   }, []);
  
   
